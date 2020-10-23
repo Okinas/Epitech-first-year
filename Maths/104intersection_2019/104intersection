@@ -1,0 +1,79 @@
+#! /usr/bin/python3
+
+import sys
+import math
+from sphere import sphere
+from cylinder import cylinder
+from cone import cone
+
+def help():
+    print("USAGE")
+    print("    ./104intersection opt xp yp zp xv yv zv p")
+    print("")
+    print("DESCRIPTION")
+    print("    opt             surface option: 1 for a sphere, 2 for a cylinder, 3 for a cone")
+    print("    (xp, yp, zp)    coordinates of a point by which the light ray passes through")
+    print("    (xv, yv, zv)    coordinates of a vector parallel to the light ray")
+    print("    p               parameter: radius of the sphere, radius of the cylinder, or")
+    print("                    angle formed by the cone and the Z-axis")
+    exit()
+
+def get_error(ac, av):
+    if ac != 9:
+        exit(84)
+    args = {}
+    try:
+        args['opt'] = int(av[1])
+        args['xp'] = int(av[2])
+        args['yp'] = int(av[3])
+        args['zp'] = int(av[4])
+        args['xv'] = int(av[5])
+        args['yv'] = int(av[6])
+        args['zv'] = int(av[7])
+        args['p'] = int(av[8])
+    except:
+        exit(84)
+    if args['opt'] < 1 or args['opt'] > 3:
+        exit(84)
+    if args['xv'] == 0 and args['yv'] == 0 and args['zv'] == 0:
+        exit(84)
+    return args
+
+def calc_delta(a, b, c ,args):
+    delta = math.pow(b, 2) - 4 * a * c
+    if delta < 0:
+        print("No intersection point.")
+    if delta == 0:
+        print("1 intersection point:")
+        racine = -b / (2 * a)
+        xi = args['xp'] + racine * args['xv']
+        yi = args['yp'] + racine * args['yv']
+        zi = args['zp'] + racine * args['zv']
+        print("({:.3f}, {:.3f}, {:.3f})".format(xi, yi, zi))
+    if delta > 0:
+        print("2 intersection points:")
+        racine_1 = ((-b - math.sqrt(delta)) / (2 * a))
+        racine_2 = ((-b + math.sqrt(delta)) / (2 * a))
+        xi_one = args['xp'] + racine_1 * args['xv']
+        yi_one = args['yp'] + racine_1 * args['yv']
+        zi_one = args['zp'] + racine_1 * args['zv']
+        xi_two = args['xp'] + racine_2 * args['xv']
+        yi_two = args['yp'] + racine_2 * args['yv']
+        zi_two = args['zp'] + racine_2 * args['zv']
+        print("({:.3f}, {:.3f}, {:.3f})".format(xi_two, yi_two, zi_two))
+        print("({:.3f}, {:.3f}, {:.3f})".format(xi_one, yi_one, zi_one))
+
+def main(ac, av):
+    if ac == 2 and av[1] == "-h":
+        help()
+    args = get_error(ac, av)
+    if av[1] == "1":
+        a, b, c = sphere(args)
+    if av[1] == "2":
+        a, b, c = cylinder(args)
+    if av[1] == "3":
+        a, b, c = cone(args)
+    calc_delta(a, b, c, args)
+
+if __name__ == '__main__':
+    main(len(sys.argv), sys.argv)

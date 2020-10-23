@@ -1,0 +1,182 @@
+#!/bin/python3
+
+import sys
+import math
+
+def help():
+    print("USAGE")
+    print("    ./102architect x y transfo1 arg11 [arg12] [transfo2 arg12 [arg22]] ...")
+    print("")
+    print("DESCRIPTION")
+    print("    x  abscissa of the original point")
+    print("    y  ordinate of the original point")
+    print("")
+    print("    transfo arg1 [arg2]")
+    print("    -t i j  translation along vector (i, j)")
+    print("    -z m n  scaling by factors m (x-axis) and n (y-axis)")
+    print("    -r d    rotation centered in O by a d degree angle")
+    print("    -s d    reflection over the axis passing through O with an inclination")
+    print("            angle of d degrees")
+    exit(0)
+
+def print_matrix(argv, result):
+    global vectors
+
+    if (round(float(vectors[0]), 2) == 0):
+        vectors[0] = 0
+    if (round(float(vectors[1]), 2) == 0):
+        vectors[1] = 0
+    print("{:.2f}\t{:.2f}\t{:.2f}".format(result[0], result[1], result[2]))
+    print("{:.2f}\t{:.2f}\t{:.2f}".format(result[3], result[4], result[5]))
+    print("{:.2f}\t{:.2f}\t{:.2f}".format(result[6], result[7], result[8]))
+    print("({:.2f}, {:.2f}) => ({:.2f}, {:.2f})".format(float(argv[1]), float(argv[2]),
+    float(vectors[0]), float(vectors[1])))
+
+def error(argc, argv):
+    flags = {"-t": 2, "-s": 1, "-z": 2, "-r": 1}
+    i = 3
+    length = 3
+    error = 0
+
+    if argc < 5:
+        return (84)
+    while (i < argc):
+        try:
+            int(argv[1])
+            int(argv[2])
+        except:
+            return (84)
+        if argv[i] not in flags.keys():
+            return (84)
+        if argv[i] == "-t" or argv[i] == "-z":
+            length += 3
+            try:
+                int(argv[i + 1])
+                int(argv[i + 2])
+            except:
+                return (84)
+        if argv[i] == "-s" or argv[i] == "-r":
+            length += 2
+            try:
+                int(argv[i + 1])
+            except:
+                return (84)
+        i += flags[argv[i]] + 1
+    if (length != argc):
+            return (84)
+    return (error)
+
+def translation(x_new, y_new, argv, i):
+    global matrix
+
+    copy = [1.00, 0.00, 0.00,
+              0.00, 1.00, 0.00,
+              0.00, 0.00, 1,00]
+
+    print("Translation along vector ({}, {})".format(argv[i + 1], argv[i + 2]))
+    copy[2] += x_new
+    copy[5] += y_new
+    matrix = matrix_calculator(copy)
+    return(matrix)
+
+def scaling(x_new, y_new, argv, i):
+    global matrix
+
+    copy = [1.00, 0.00, 0.00,
+              0.00, 1.00, 0.00,
+              0.00, 0.00, 1,00]
+
+    print("Scaling by factors {} and {}".format(argv[i + 1], argv[i + 2]))
+    copy[0] *= x_new
+    copy[4] *= y_new
+    matrix = matrix_calculator(copy)
+    return (matrix)
+
+def rotation(x_new, argv, i):
+    global matrix
+
+    copy = [1.00, 0.00, 0.00,
+            0.00, 1.00, 0.00,
+            0.00, 0.00, 1,00]
+
+    print("Rotation by a {} degree angle".format(argv[i + 1]))
+    copy[0] = math.cos(x_new / 180 * math.pi)
+    copy[1] = math.sin(x_new / 180 * math.pi) * -1
+    copy[3] = math.sin(x_new / 180 * math.pi)
+    copy[4] = math.cos(x_new / 180 * math.pi)
+    matrix = matrix_calculator(copy)
+    return (matrix)
+
+def reflection(x_new, argv, i):
+    global matrix
+
+    copy = [1.00, 0.00, 0.00,
+            0.00, 1.00, 0.00,
+            0.00, 0.00, 1,00]
+
+    print("Reflection over an axis with an inclination angle of {} degrees".format(argv[i + 1]))
+    copy[0] = math.cos(2 * x_new / 180 * math.pi)
+    copy[1] = math.sin(2 * x_new / 180 * math.pi)
+    copy[3] = math.sin(2 * x_new / 180 * math.pi)
+    copy[4] = math.cos(2 * x_new / 180 * math.pi) * -1
+    matrix = matrix_calculator(copy)
+    return (matrix)
+
+def matrix_calculator(copy):
+    global matrix
+
+    result = [1.00, 0.00, 0.00,
+              0.00, 1.00, 0.00,
+              0.00, 0.00, 1,00]
+
+    result[0] = copy[0] * matrix[0] + copy[1] * matrix[3] + copy[2] * matrix[6]
+    result[1] = copy[0] * matrix[1] + copy[1] * matrix[4] + copy[2] * matrix[7]
+    result[2] = copy[0] * matrix[2] + copy[1] * matrix[5] + copy[2] * matrix[8]
+    result[3] = copy[3] * matrix[0] + copy[4] * matrix[3] + copy[5] * matrix[6]
+    result[4] = copy[3] * matrix[1] + copy[4] * matrix[4] + copy[5] * matrix[7]
+    result[5] = copy[3] * matrix[2] + copy[4] * matrix[5] + copy[5] * matrix[8]
+    result[6] = copy[6] * matrix[0] + copy[7] * matrix[3] + copy[8] * matrix[6]
+    result[7] = copy[6] * matrix[1] + copy[7] * matrix[4] + copy[8] * matrix[7]
+    result[8] = copy[6] * matrix[2] + copy[7] * matrix[5] + copy[8] * matrix[8]
+    for i in range(9):
+        if (round(result[i], 2) == 0):
+            result[i] = 0
+    return (result)
+
+def vector(result):
+    global vectors
+
+    vectors[0] = result[0] * float(x) + result[1] * float(y) + result[2]
+    vectors[1] = result[3] * float(x) + result[4] * float(y) + result[5]
+
+def main(argc, argv):
+    if argc == 2 and argv[1] == "-h":
+        help()
+        exit()
+    elif error(argc, argv) == 84:
+        exit(84)
+    else:
+        global x, y, matrix, vectors
+        x = argv[1]
+        y = argv[2]
+
+    vectors = [int(x), int(y)]
+
+    matrix = [1.00, 0.00, 0.00,
+              0.00, 1.00, 0.00,
+              0.00, 0.00, 1,00]
+
+    for i, element in enumerate(argv):
+        if element == "-t":
+            matrix = translation(float(argv[i + 1]), float(argv[i + 2]), argv, i)
+        if element == "-z":
+            matrix = scaling(float(argv[i + 1]), float(argv[i + 2]), argv, i)
+        if element == "-r":
+            matrix = rotation(float(argv[i + 1]), argv, i)
+        if element == "-s":
+            matrix = reflection(float(argv[i + 1]), argv, i)
+    vector(matrix)
+    print_matrix(argv, matrix)
+
+if __name__ == '__main__':
+    main(len(sys.argv), sys.argv)

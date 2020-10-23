@@ -1,0 +1,59 @@
+#! /usr/bin/python3
+
+import sys
+import math
+from bisection import bisection
+from newton import newton
+from secant import secant
+
+def help():
+    print("USAGE")
+    print("    ./105torus opt a0 a1 a2 a3 a4 n")
+    print("")
+    print("DESCRIPTION")
+    print("    opt       method option:")
+    print("                  1 for the bisection method")
+    print("                  2 for Newton’s method")
+    print("                  3 for the secant method")
+    print("    a[0-4]    coefficients of the equation")
+    print("    n         precision (the application of the polynomial to the solution should")
+    print("              be smaller than 10ˆ-n)")
+    exit()
+
+def get_error(ac, av):
+    if ac != 8:
+        exit(84)
+    args = {}
+    try:
+        args['opt'] = int(av[1])
+        args['a0'] = int(av[2])
+        args['a1'] = int(av[3])
+        args['a2'] = int(av[4])
+        args['a3'] = int(av[5])
+        args['a4'] = int(av[6])
+        args['n'] = int(av[7])
+    except:
+        exit(84)
+    for i in range(ac - 1):
+        if "." in av[i + 1]:
+            exit(84)
+    if av[1] != "1" and av[1] != "2" and av[1] != "3":
+        exit(84)
+    if args['n'] < 0:
+        exit(84)
+    return (args)
+
+def main(ac, av):
+    if ac == 2 and av[1] == "-h":
+        help()
+    args = get_error(ac, av)
+    if args['opt'] == 1:
+        bisection(args)
+    if args['opt'] == 2:
+        print("x = 0.5")
+        newton(args, 0.5, 1)
+    if args['opt'] == 3:
+        secant(args, 0, 1)
+
+if __name__ == '__main__':
+    main(len(sys.argv), sys.argv)

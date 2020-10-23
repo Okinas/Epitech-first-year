@@ -1,0 +1,76 @@
+#! /usr/bin/python3
+import sys
+import math
+
+if len(sys.argv) == 2 and sys.argv[1] == "-h":
+    print("USAGE")
+    print("    ./101pong x0 y0 z0 x1 y1 z1 n")
+    print("")
+    print("DESCRIPTION")
+    print("    x0  ball abscissa at time t - 1")
+    print("    y0  ball ordinate at time t - 1")
+    print("    z0  ball altitude at time t - 1")
+    print("    x1  ball abscissa at time t")
+    print("    y1  ball ordinate at time t")
+    print("    z1  ball altitude at time t")
+    print("    n   time shift (greater than or equal to zero, integer)")
+elif len(sys.argv) != 8:
+    print("Invalid number of arguments.")
+    exit(84)
+
+if "." in sys.argv[7]:
+    exit(84)
+
+try:
+    x0 = float(sys.argv[1])
+    y0 = float(sys.argv[2])
+    z0 = float(sys.argv[3])
+    x1 = float(sys.argv[4])
+    y1 = float(sys.argv[5])
+    z1 = float(sys.argv[6])
+    n = int(sys.argv[7])
+except ValueError:
+    print("Invalid arguments.")
+    exit(84)
+
+if n < 0:
+    exit(84)
+
+def calc_velocity_vector(x0, y0, z0, x1, y1, z1):
+    x_vec = x1 - x0
+    y_vec = y1 - y0
+    z_vec = z1 - z0
+    print("The velocity vector of the ball is:")
+    print("({:.2f}, {:.2f}, {:.2f})".format(x_vec, y_vec, z_vec))
+    calc_ball_coord(x1, y1, z1, x_vec, y_vec, z_vec, n)
+
+def calc_ball_coord(x1, y1, z1, x_vec, y_vec, z_vec, n):
+    x_ball = n * x_vec + x1
+    y_ball = n * y_vec + y1
+    z_ball = n * z_vec + z1
+    print("At time t + {}, ball coordinates will be:".format(n))
+    print("({:.2f}, {:.2f}, {:.2f})".format(x_ball, y_ball, z_ball))
+    reach_paddle(x_vec, y_vec, z_vec, x1, y1, z1)
+
+def reach_paddle(x_vec, y_vec, z_vec, x1, y1, z1):
+    if (z_vec < 0 and z1 < 0) or (z_vec > 0 and z1 > 0) or (z_vec == 0 and z1 != 0):
+        print("The ball won't reach the paddle.")
+    else:
+        calc_angle(x_vec, y_vec, z_vec, x1, y1, z1)
+
+def calc_angle(x_vec, y_vec, z_vec, x1, y1, z1):
+    if (z_vec == 0):
+        print("The incidence angle is:")
+        print("0.00 degrees")
+    else:
+        t = -z1 / z_vec
+        x_zero = t * x_vec + x1
+        y_zero = t * y_vec + y1
+        z_zero = t * z_vec + z1
+        hypo = math.sqrt(math.pow(x_zero - x1, 2) \
+        + math.pow(y_zero - y1, 2) + math.pow(z_zero - z1, 2))
+        angle = (90 - math.degrees(math.acos(z1/hypo)))
+        print("The incidence angle is:")
+        print("{:.2f} degrees".format(abs(angle)))
+
+calc_velocity_vector(x0, y0, z0, x1, y1, z1)

@@ -1,0 +1,74 @@
+#!/usr/bin/env python3
+
+import sys
+from math import *
+from maths import pow_mat, div_mat, add_mat, sub_mat, mat_identity
+from calc import sin_calc, sinh_calc, cos_calc, cosh_calc, exp_calc
+
+def print_help():
+    print("USAGE\n"
+        "    ./108trigo fun a0 a1 a2....\n\n"
+        "DESCRIPTION\n"
+        "    fun     function to be applied, "
+        "among at least \"EXP\", \"COS\", \"SIN\", \"COSH\"\n"
+        "            and \"SINH\"\n"
+        "    ai      coeficients of the matrix")
+    sys.exit(0)
+
+def init_mat(n, k):
+    tab = []
+    for a in range(n):
+        tab2 = []
+        for b in range(n):
+            tab2.append(k)
+        tab.append(tab2)
+    return (tab)
+
+def verif_args():
+    if "-h" in sys.argv or "--help" in sys.argv:
+        print_help()
+    if len(sys.argv) <= 2 or sys.argv[1] not in ["EXP", "COS", "SIN", "COSH", "SINH"]:
+        sys.exit(84)
+    try:
+        for a in range(2, len(sys.argv)):
+            sys.argv[a] = float(sys.argv[a])
+    except ValueError:
+        exit(84)
+
+def error_mat():
+    a = len(sys.argv) - 2
+    b = trunc(sqrt(a))
+    if trunc(sqrt(a)) ** 2 != a:
+        sys.exit(84)
+    return (b)
+
+def aff_matrix(tab):
+    for a in range(len(tab)):
+        for b in range (len(tab[a])):
+            print("%.2f%c" % (tab[a][b], "\t" if (b != len(tab[a]) - 1) else "\n"), end="")
+
+def tab_fonctions():
+    tab_fc = [exp_calc, cos_calc, sin_calc, cosh_calc, sinh_calc]
+
+def process(mat):
+    args = ["EXP", "COS", "SIN", "COSH", "SINH"]
+    mat_fc = [exp_calc, cos_calc, sin_calc, cosh_calc, sinh_calc]
+    for a in range(len(mat_fc)):
+        if sys.argv[1] == args[a]:
+            mat = mat_fc[a](mat)
+    return (mat)
+
+def main():
+    verif_args()
+    mat = []
+    a = error_mat()
+    for b in range(int(a)):
+        mat.append([])
+        for c in range (int(a)):
+            mat[b].append(sys.argv[b * int(a) + c + 2])
+    mat = process(mat)
+    aff_matrix(mat)
+
+if __name__ == '__main__':
+    main()
+    sys.exit(0)

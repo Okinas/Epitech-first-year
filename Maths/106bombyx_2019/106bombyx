@@ -1,0 +1,60 @@
+#!/usr/bin/python3
+
+import sys
+from normal import normal
+from gen import gen
+
+def print_help():
+   print("USAGE")
+   print("    ./106bombyx n [k | i0 i1]\n")
+   print("DESCRIPTION")
+   print("    n   number of first generation individuals")
+   print("    k   growth rate from 1 to 4")
+   print("    i0  initial generation (included)")
+   print("    i1  final generation (included)")
+   exit(0)
+
+def get_error(ac, av):
+
+   if ac != 3 and ac != 4:
+      exit(84)
+   for i in range(1, ac):
+      try:
+         if i == 2:
+            float(av[i]);
+         else:
+            int(av[i])
+      except:
+         exit(84)
+   if int(av[1]) < 0:
+      exit(84)
+   if (ac == 3) and ("." in av[1] or float(av[2]) < 1 or float(av[2]) > 4):
+      exit(84)
+   if (ac == 4) and ("." in av[1] or "." in av[2] or "." in av[3] or int(av[1]) <= 0 or int(av[1]) >= int(av[2])):
+      exit(84)
+
+def fill_args(ac, av):
+   args = {"n": int(av[1])}
+   args["type"] = "NORMAL" if ac == 3 else "GEN"
+
+   if ac == 3:
+      args["k"] = float(av[2])
+   else:
+      args["i0"] = int(av[2])
+      args["i1"] = int(av[3])
+   return args
+
+def main(ac, av):
+
+   if ac == 2 and av[1] == "-h":
+      print_help()
+   get_error(ac, av)
+   args = fill_args(ac, av)
+   if args["type"] == "NORMAL":
+      normal(args)
+   else:
+      gen(args)
+
+
+if __name__ == "__main__":
+    main(len(sys.argv), sys.argv)

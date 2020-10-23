@@ -1,0 +1,50 @@
+#!/usr/bin/env python3
+
+import sys
+from math import *
+from midpoint import my_midpoint
+from simpson import my_simpson
+from trapezoidal import my_trapezoidal
+from function import function
+
+a = 0
+b = 5000
+n = 10000
+h = (b - a) / n
+pi_2 = pi / 2
+
+def usage():
+    print("USAGE:\n" "\t\t{} n\n" "DESCRIPTION\n" "\t\tn\tconstant defining the integral to be computed".format(sys.argv[0]))
+
+def init_arg():
+    try:
+        arg = int(sys.argv[1])
+    except ValueError:
+        usage()
+        exit(84)
+    if (arg < 0):
+        usage()
+        exit(84)
+    return (arg)
+
+def check_args():
+    if "--help" in sys.argv or "-h" in sys.argv:
+        usage()
+        sys.exit(0)
+    if len(sys.argv) != 2:
+        usage()
+        sys.exit(84)
+
+def main():
+    check_args()
+    arg = init_arg()
+    func = 1
+    print("Midpoint:")
+    my_midpoint(arg)
+    print("Trapezoids:")
+    my_trapezoidal(arg)
+    print("Simpson:")
+    my_simpson(arg)
+
+if __name__ == '__main__':
+    main()

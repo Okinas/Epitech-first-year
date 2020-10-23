@@ -1,0 +1,71 @@
+#!/usr/bin/python3
+
+import sys
+import math
+
+def print_help():
+    print("USAGE")
+    print("        ./107transfer [num den]*\n")
+    print("DESCRIPTION")
+    print("        num   polynomial numerator defined by its coeficients")
+    print("        den   polynomial denominator defined by its coeficients")
+    exit()
+
+def check_error(ac, av):
+
+    a = 1
+
+    if ac < 2 or (ac - 1) % 2 != 0:
+        exit(84)
+    while a < ac:
+        for b in av[a]:
+            if b != '*' and b.isnumeric() == False and b != '-':
+                exit(84)
+        for i in range(len(av[a]) - 1):
+            if i != len(av[a]) - 1 and av[a][i] == "*" and av[a][i + 1] == "*":
+                exit(84)
+            if (av[a][i] == "-") and ((i != len(av[a]) - 1 and av[a][i + 1].isnumeric() == False) or (i != 0 and av[a][i - 1] != "*")):
+                exit(84)
+        if av[a][0] == "*" or av[a][len(av[a]) - 1] == "*":
+            exit(84)
+        a += 1
+
+def my_calc(str, nb):
+    save = float(0)
+    a = len(str) - 1
+    pos_fin = a
+    pos_deb = 0
+
+    while a >= 0:
+        pos_fin = a
+        while a >= 0 and str[a] != "*":
+            a -= 1
+        a += 1
+        pos_deb = a
+        save = save * nb + float(str[pos_deb:pos_fin + 1])
+        a -= 2
+    return save
+
+def transfer(ac, av):
+    one = float(0)
+    offset = float(0.00100)
+
+    while one < 1.001:
+        two = float(1)
+        for a in range(1, ac, 2):
+            if my_calc(av[a + 1], one) == 0:
+                exit(84)
+            two *= my_calc(av[a], one) / my_calc(av[a + 1], one)
+        if round(two, 5) == 0:
+            two = 0
+        print("{:.3f} -> {:.5f}".format(one, two))
+        one += offset
+
+def main(ac, av):
+    if ac == 2 and av[1] == "-h":
+        print_help()
+    check_error(ac, av)
+    transfer(ac, av)
+
+if __name__ == "__main__":
+    main(len(sys.argv), sys.argv)
