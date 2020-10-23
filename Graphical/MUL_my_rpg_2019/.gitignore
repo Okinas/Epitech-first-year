@@ -1,0 +1,11 @@
+*.o
+*.gc*
+my_rpg
+.vscode
+*.a
+/assets/
+valgrind*
+log*
+saves
+*.csv
+*.sav
