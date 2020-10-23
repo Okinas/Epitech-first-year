@@ -1,0 +1,7 @@
+debug
+generator/generator
+solver/solver
+*.a
+*.o
+maze
+maze_500x500

@@ -1,0 +1,7 @@
+*.o
+lem_in
+*.gc*
+comp
+file
+file2
+*.a
