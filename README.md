@@ -6,4 +6,6 @@ Petite mise en garde, à Epitech si vous copiez collé du code vous aurez pour r
 
 Si le repos t'a été utile, pense à lui laisser un Star et le partager à tes amis ^^
 
-![Screenshot](epitech.png)
+<p align="center">
+  <img src="epitech.png?raw=true" alt="Logo" width="200"/>
+</p>
