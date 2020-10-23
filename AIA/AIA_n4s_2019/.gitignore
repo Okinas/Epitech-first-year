@@ -1,0 +1,12 @@
+*.o
+*.gc*
+ai
+.vscode
+*.a
+valgrind*
+log*
+saves
+n4s
+n4s_buffer
+*.sh
+/scene/*
